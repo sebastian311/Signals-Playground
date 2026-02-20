@@ -1,23 +1,24 @@
+import { Component, signal } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-default',
-  templateUrl: './default.component.html',
+  selector: 'app-signals',
+  templateUrl: './signals.component.html',
   standalone: true,
-  imports: [NgFor],
+  imports: [NgFor]
 })
-export class DefaultComponent {
-  actions: string[] = [];
-  counter = 0;
+
+export class SignalsComponent {
+  actions = signal<string[]>([]);
+  counter = signal<number>(0);
 
   increment() {
-    this.counter++;
-    this.actions.push('INCREMENT');
+    this.actions.update((val: string[]) => [...val, 'INCREMENT']);
+    this.counter.update((val: number) => val + 1);
   }
 
   decrement() {
-    this.counter--;
-    this.actions.push('DECREMENT');
+    this.counter.update((val: number) => val - 1);
+    this.actions.update((val: string[]) => [...val, 'DECREMENT']);
   }
 }
