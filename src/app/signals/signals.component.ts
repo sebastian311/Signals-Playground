@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed, effect, untracked } from '@angular/core';
 import { NgFor } from '@angular/common';
 
 @Component({
@@ -11,6 +11,24 @@ import { NgFor } from '@angular/common';
 export class SignalsComponent {
   actions = signal<string[]>([]);
   counter = signal<number>(0);
+  doubleCounter = computed(() => this.counter() * 2);
+  buttonsClicked = signal<number>(0);
+  private hasInitializedCounterEffect = false;
+
+  constructor() {
+    effect(() => {
+      this.counter();
+
+      if (!this.hasInitializedCounterEffect) {
+        this.hasInitializedCounterEffect = true;
+        return;
+      }
+
+      untracked(() => {
+        this.buttonsClicked.update((val: number) => val + 1);
+      });
+    });
+  }
 
   increment() {
     this.actions.update((val: string[]) => [...val, 'INCREMENT']);
